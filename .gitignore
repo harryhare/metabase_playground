@@ -1,4 +1,4 @@
-.db
-.jar
+*.db
+*.jar
 data/
 plugins/
