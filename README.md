@@ -1,25 +1,38 @@
 ### problem to solve
 
-[ ] mongo 无法从非localhost 访问（用）
+[x] mongo 无法从非localhost 访问（用）
+	默认 mongo.exe 启动时只绑定 localhost
 
+	>WARNING: This server is bound to localhost.
+	Remote systems will be unable to connect to this server.
+	Start the server with --bind_ip <address> to specify which IP
+	addresses it should serve responses from, or with --bind_ip_all to
+	bind to all interfaces. If this behavior is desired, start the
+	server with --bind_ip 127.0.0.1 to disable this warning.
+
+	启动时需要加参数 
+	```
+	mongod.exe  --bind_ip 0.0.0.0
+	```
+	
 [x] docker --network host 无法访问app端口（只有linux 下才可以）
 
 [x] docker host 是用哪个 网卡， 为什么 172.17.0.1 无效
-docker 在宿主机中没有docker0网络，只有个nat 接口
-host 的地址是 192.168.65.2（host.docker.internal），当然也可以用外网地址访问host
-172.17.0.1 或者 172.18.0.1 这种地址 会出现在第一个创建的 以host作为网络模式的 容器中，所以在 linux 下访问宿主机的地址，在windows 下只是访问了一个谎称是host模式的container
-参考：https://docs.docker.com/docker-for-windows/networking/
+	docker 在宿主机中没有docker0网络，只有个nat 接口
+	host 的地址是 192.168.65.2（host.docker.internal），当然也可以用外网地址访问host
+	172.17.0.1 或者 172.18.0.1 这种地址 会出现在第一个创建的 以host作为网络模式的 容器中，所以在 linux 下访问宿主机的地址，在windows 下只是访问了一个谎称是host模式的container
+	参考：https://docs.docker.com/docker-for-windows/networking/
 
 [x] docker nat 是做啥的？（ipconfig 看到的地址是 10.0.75.1/24）
-比如把容器80 映射到 8081，那么我们 curl 10.0.71.1/24:8081 是可以访问的
-但是 host模式的容器 中ifconfig 地址是（10.0.71.2/24），host 模式的容器可以curl 10.0.71.2:8081 ,但是不能 curl 10.0.71.1:8081
+	比如把容器80 映射到 8081，那么我们 curl 10.0.71.1/24:8081 是可以访问的
+	但是 host模式的容器 中ifconfig 地址是（10.0.71.2/24），host 模式的容器可以curl 10.0.71.2:8081 ,但是不能 curl 10.0.71.1:8081
 
 [x] 绑得是哪个网卡的80？
 
 
-[ ] metabase 连接数据库入口
+[x] metabase 连接数据库入口
 
-[ ] mongo 制作数据
+[x] mongo 制作数据
 
 
 
@@ -108,7 +121,12 @@ host 的地址是 192.168.65.2（host.docker.internal），当然也可以用外
 		```
 		java -jar metabase.jar
 		```
-
+	- [metabase 调优](https://www.mayi888.com/archives/58788)
+		```
+		MB_JETTY_MAXTHREADS=100
+		```
+	- [数据可视化的开源方案: Superset vs Redash vs Metabase](https://www.cnblogs.com/felixzh/p/9094694.html) 
+	
 * mongo 
 	* docker
 		```
@@ -117,6 +135,9 @@ host 的地址是 192.168.65.2（host.docker.internal），当然也可以用外
 	* windows exe
 		```
 		d:/tools
+		```	
+		```
+		mongod.exe  --bind_ip 0.0.0.0
 		```
 	* roto 3T
 		```
@@ -129,5 +150,23 @@ host 的地址是 192.168.65.2（host.docker.internal），当然也可以用外
 		```
 	* mongo client login
 		```
-		Berliner Innensenator erw?gt im Notfall Abriegelung der Stadt”
+		mongo localhost:27017/test -u test -p test1234 --authenticationDatabase admin 
 		```
+		```
+		use admin
+		db.auth("test","test1234")
+		```
+		
+	* export/dump
+		```
+		# db -> 文件夹
+		mongodump.exe --db test
+		# collections -> console
+		mongoexport.exe --db test --collection number
+		# collection -> file
+		mongoexport.exe --db test --collection number --out test.json
+		# collections -> files
+		mongoexport.exe --db test --collection number --out test
+		```
+
+		
